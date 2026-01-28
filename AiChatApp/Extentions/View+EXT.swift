@@ -16,7 +16,10 @@ extension View {
             .frame(maxWidth: .infinity)
             .frame(height: 55)
             .background(.accent)
-            .clipShape(.capsule)
+            .cornerRadius(55)
     }
     
+    func tappableBackground() -> some View {
+        background(Color.black.opacity(0.001))
+    }
 }
