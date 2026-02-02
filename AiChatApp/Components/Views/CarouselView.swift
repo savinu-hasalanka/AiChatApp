@@ -39,13 +39,13 @@ struct CarouselView<Content: View, T: Hashable>: View {
             .onAppear {
                 updateSelectionIfNeeded()
             }
-        }
-        
-        HStack(spacing: 8) {
-            ForEach(items, id: \.self) { item in
-                Circle()
-                    .fill(item == selection ? Color.accent : Color.secondary.opacity(0.5))
-                    .frame(width: 8, height: 8)
+            
+            HStack(spacing: 8) {
+                ForEach(items, id: \.self) { item in
+                    Circle()
+                        .fill(item == selection ? Color.accent : Color.secondary.opacity(0.5))
+                        .frame(width: 8, height: 8)
+                }
             }
         }
     }
