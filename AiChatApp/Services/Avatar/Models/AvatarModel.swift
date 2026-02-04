@@ -41,11 +41,11 @@ struct AvatarModel: Hashable {
         AvatarDescriptionBuilder(avatar: self).characterDescription
     }
     
-    static var mock: AvatarModel {
+    static var mock: Self {
         mocks[0]
     }
     
-    static var mocks: [AvatarModel] = [
+    static var mocks: [Self] = [
         AvatarModel(avatarId: UUID().uuidString, name: "Alpha", charaterOption: .alien, charaterAction: .smilling, charaterLocation: .park, profileImageName: Constants.randomImage, authorId: UUID().uuidString, createdDate: .now),
         AvatarModel(avatarId: UUID().uuidString, name: "Beta", charaterOption: .dog, charaterAction: .eating, charaterLocation: .forest, profileImageName: Constants.randomImage, authorId: UUID().uuidString, createdDate: .now),
         AvatarModel(avatarId: UUID().uuidString, name: "Gamma", charaterOption: .cat, charaterAction: .drinking, charaterLocation: .museum, profileImageName: Constants.randomImage, authorId: UUID().uuidString, createdDate: .now),
