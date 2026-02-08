@@ -10,7 +10,7 @@ import SwiftUI
 struct ExploreView: View {
     
     @State private var featuredAvatars: [AvatarModel] = AvatarModel.mocks
-    @State private var categories: [CharaterOption] = CharaterOption.allCases
+    @State private var categories: [CharacterOption] = CharacterOption.allCases
     @State private var popularAvatars: [AvatarModel] = AvatarModel.mocks
     
     var body: some View {
