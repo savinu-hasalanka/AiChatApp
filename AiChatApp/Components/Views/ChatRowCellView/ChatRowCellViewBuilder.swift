@@ -73,20 +73,20 @@ struct ChatRowCellViewBuilder: View {
         } getLastChatMessage: {
             .mock
         }
-
+        
         
         ChatRowCellViewBuilder {
             .mock
         } getLastChatMessage: {
             .mock
         }
-
+        
         
         ChatRowCellViewBuilder {
             nil
         } getLastChatMessage: {
             nil
         }
-
+        
     }
 }
