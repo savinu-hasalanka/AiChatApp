@@ -51,7 +51,7 @@ struct ExploreView: View {
                     HStack(spacing: 12) {
                         ForEach(categories, id: \.self) { category in
                             CategoryCellView(
-                                title: category.rawValue.capitalized
+                                title: category.plural.capitalized
                             )
                             .frame(height: 140)
                             .anyButton {
