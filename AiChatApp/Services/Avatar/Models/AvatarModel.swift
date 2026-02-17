@@ -8,7 +8,7 @@
 import Foundation
 
 struct AvatarModel: Hashable {
-    let avatarId: String?
+    let avatarId: String
     let name: String?
     let characterOption: CharacterOption?
     let characterAction: CharacterAction?
@@ -18,7 +18,7 @@ struct AvatarModel: Hashable {
     let createdDate: Date?
     
     init(
-        avatarId: String?,
+        avatarId: String,
         name: String? = nil,
         characterOption: CharacterOption? = nil,
         characterAction: CharacterAction? = nil,
