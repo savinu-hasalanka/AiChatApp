@@ -1,0 +1,41 @@
+//
+//  MockAuthService.swift
+//  AiChatApp
+//
+//  Created by Savinu Hasalanka on 23/02/2026.
+//
+
+import Foundation
+
+struct MockAuthService: AuthService {
+    
+    let currentUser: UserAuthInfo?
+    
+    init(user: UserAuthInfo? = nil) {
+        self.currentUser = user
+    }
+    
+    func getAuthenticatedUser() -> UserAuthInfo? {
+        return currentUser
+    }
+    
+    func signInAnonymously() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
+        let user = UserAuthInfo.mock(isAnonymous: true)
+        return (user, true)
+    }
+    
+    func signInWithApple() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
+        let user = UserAuthInfo.mock(isAnonymous: false)
+        return (user, false)
+    }
+    
+    func signOut() throws {
+        
+    }
+    
+    func deleteAccount() async throws {
+        
+    }
+    
+    
+}
