@@ -10,7 +10,7 @@ import SwiftUI
 struct AppView: View {
     
 //    @AppStorage("showTabBarView") var showTabBar: Bool = false
-    @Environment(\.authService) private var authService
+    @Environment(AuthManager.self) private var authManager
     @State var appState: AppState = AppState()
     
     var body: some View {
@@ -27,14 +27,21 @@ struct AppView: View {
         .task {
             await checkUserStatus()
         }
+        .onChange(of: appState.showTabBar) { _, showTabBar in
+            if !showTabBar {
+                Task {
+                    await checkUserStatus()
+                }
+            }
+        }
     }
     
     private func checkUserStatus() async {
-        if let user = authService.getAuthenticatedUser() {
+        if let user = authManager.auth {
             print("User already authenticated: \(user.uid)")
         } else {
             do {
-                let result = try await authService.signInAnonymously()
+                let result = try await authManager.signInAnonymously()
                 print("Sign in anonymously succesfull. \(result.user.uid)")
             } catch {
                 print(error)
@@ -45,8 +52,11 @@ struct AppView: View {
 
 #Preview("AppView - Tabbar") {
     AppView(appState: AppState(showTabBar: true))
+        .environment(AuthManager(service: MockAuthService(user: .mock())))
 }
 
 #Preview("AppView - Onboarding") {
     AppView(appState: AppState(showTabBar: false))
+        .environment(AuthManager(service: MockAuthService()))
+
 }
