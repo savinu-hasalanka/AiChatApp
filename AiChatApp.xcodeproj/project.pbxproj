@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		BA51AB942F4AF0D400FB5259 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = BA51AB932F4AF0D400FB5259 /* FirebaseAuth */; };
 		BA51ABA32F4C191900FB5259 /* SignInAppleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = BA51ABA22F4C191900FB5259 /* SignInAppleAsync */; };
+		BA51ABB32F4EFEF900FB5259 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = BA51ABB22F4EFEF900FB5259 /* FirebaseFirestore */; };
 		BA973DE22F29FC3400FE89D0 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = BA973DE12F29FC3400FE89D0 /* SDWebImageSwiftUI */; };
 /* End PBXBuildFile section */
 
@@ -59,6 +60,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BA973DE22F29FC3400FE89D0 /* SDWebImageSwiftUI in Frameworks */,
+				BA51ABB32F4EFEF900FB5259 /* FirebaseFirestore in Frameworks */,
 				BA51AB942F4AF0D400FB5259 /* FirebaseAuth in Frameworks */,
 				BA51ABA32F4C191900FB5259 /* SignInAppleAsync in Frameworks */,
 			);
@@ -81,12 +83,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BA51ABB12F4EFEF900FB5259 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		BA7C12BE2F28D61C001A2FF8 = {
 			isa = PBXGroup;
 			children = (
 				BA7C12C92F28D61C001A2FF8 /* AiChatApp */,
 				BA7C12D72F28D61D001A2FF8 /* AiChatAppTests */,
 				BA7C12E12F28D61D001A2FF8 /* AiChatAppUITests */,
+				BA51ABB12F4EFEF900FB5259 /* Frameworks */,
 				BA7C12C82F28D61C001A2FF8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -124,6 +134,7 @@
 				BA973DE12F29FC3400FE89D0 /* SDWebImageSwiftUI */,
 				BA51AB932F4AF0D400FB5259 /* FirebaseAuth */,
 				BA51ABA22F4C191900FB5259 /* SignInAppleAsync */,
+				BA51ABB22F4EFEF900FB5259 /* FirebaseFirestore */,
 			);
 			productName = AiChatApp;
 			productReference = BA7C12C72F28D61C001A2FF8 /* AiChatApp.app */;
@@ -639,6 +650,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = BA51ABA12F4C191900FB5259 /* XCRemoteSwiftPackageReference "SignInAppleAsync" */;
 			productName = SignInAppleAsync;
+		};
+		BA51ABB22F4EFEF900FB5259 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BA51AB922F4AF0D400FB5259 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
 		};
 		BA973DE12F29FC3400FE89D0 /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -12,6 +12,8 @@ struct CreateAccountView: View {
     
     @Environment(\.dismiss) private var dismiss
     @Environment(AuthManager.self) private var authManager
+    @Environment(UserManager.self) private var userManager
+    
     var title: String = "Create Accont?"
     var subtitle: String = "Don't lose your data. Connect to an SSO provider to save your account."
     var onDidSignIn: ((_ isNewUser: Bool) -> Void)?
@@ -48,6 +50,10 @@ struct CreateAccountView: View {
             do {
                 let result = try await authManager.signInWithApple()
                 print("Did sign in with Apple.")
+                
+                try await userManager.logIn(auth: result.user, isNewUser: result.isNewUser)
+                print("Did log in.")
+
                 onDidSignIn?(result.isNewUser)
                 dismiss()
             } catch {
