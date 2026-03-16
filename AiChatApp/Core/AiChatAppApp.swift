@@ -15,28 +15,25 @@ struct AiChatAppApp: App {
     
     var body: some Scene {
         WindowGroup {
-            EnvironmentBuilder {
-                AppView()
-            }
+            AppView()
+                .environment(delegate.authManageer)
+                .environment(delegate.userManager)
         }
     }
 }
 
-struct EnvironmentBuilder<Content: View>: View {
-    
-    @ViewBuilder var content: () -> Content
-    
-    var body: some View {
-        content()
-            .environment(AuthManager(service: FirebaseAuthService()))
-            .environment(UserManager(service: FirebaseUserService()))
-    }
-}
-
 class AppDelegate: NSObject, UIApplicationDelegate {
-  func application(_ application: UIApplication,
+    var authManageer: AuthManager!
+    var userManager: UserManager!
+  
+    func application(_ application: UIApplication,
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-    FirebaseApp.configure()
-    return true
+        
+        FirebaseApp.configure()
+        
+        authManageer = AuthManager(service: FirebaseAuthService())
+        userManager = UserManager(services: ProductionUserServices())
+        
+        return true
   }
 }
