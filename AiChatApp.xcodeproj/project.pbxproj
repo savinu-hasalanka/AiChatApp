@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		BA243E252F68450500C2C9D8 /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = BA243E242F68450500C2C9D8 /* OpenAI */; };
+		BA243E342F6974EE00C2C9D8 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = BA243E332F6974EE00C2C9D8 /* FirebaseStorage */; };
 		BA2837F22F60B14200599C03 /* SwiftfulFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = BA2837F12F60B14200599C03 /* SwiftfulFirestore */; };
 		BA51AB942F4AF0D400FB5259 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = BA51AB932F4AF0D400FB5259 /* FirebaseAuth */; };
 		BA51ABA32F4C191900FB5259 /* SignInAppleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = BA51ABA22F4C191900FB5259 /* SignInAppleAsync */; };
@@ -65,6 +66,7 @@
 				BA51ABB32F4EFEF900FB5259 /* FirebaseFirestore in Frameworks */,
 				BA51AB942F4AF0D400FB5259 /* FirebaseAuth in Frameworks */,
 				BA51ABA32F4C191900FB5259 /* SignInAppleAsync in Frameworks */,
+				BA243E342F6974EE00C2C9D8 /* FirebaseStorage in Frameworks */,
 				BA243E252F68450500C2C9D8 /* OpenAI in Frameworks */,
 				BA2837F22F60B14200599C03 /* SwiftfulFirestore in Frameworks */,
 			);
@@ -141,6 +143,7 @@
 				BA51ABB22F4EFEF900FB5259 /* FirebaseFirestore */,
 				BA2837F12F60B14200599C03 /* SwiftfulFirestore */,
 				BA243E242F68450500C2C9D8 /* OpenAI */,
+				BA243E332F6974EE00C2C9D8 /* FirebaseStorage */,
 			);
 			productName = AiChatApp;
 			productReference = BA7C12C72F28D61C001A2FF8 /* AiChatApp.app */;
@@ -669,6 +672,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = BA243E232F68450500C2C9D8 /* XCRemoteSwiftPackageReference "OpenAI" */;
 			productName = OpenAI;
+		};
+		BA243E332F6974EE00C2C9D8 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BA51AB922F4AF0D400FB5259 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
 		};
 		BA2837F12F60B14200599C03 /* SwiftfulFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
