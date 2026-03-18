@@ -22,7 +22,7 @@ extension View {
                 case .chat(avatarId: let avatarId):
                     ChatView(avatarId: avatarId)
                 case .category(category: let category, imageName: let imageName):
-                    CategoryListView(path: path, category: category, imageName: imageName)
+                    CategoryListView(category: category, imageName: imageName, path: path)
                 }
             }
     }
