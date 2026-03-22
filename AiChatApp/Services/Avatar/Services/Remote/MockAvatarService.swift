@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MockAvatarService: RemoteAvatarService {
-    
+
     func createAvatar(avatar: AvatarModel, image: UIImage) async throws {
         
     }
@@ -36,5 +36,9 @@ struct MockAvatarService: RemoteAvatarService {
     func getAvatarsForAuthor(userId: String) async throws -> [AvatarModel] {
         try await Task.sleep(for: .seconds(1))
         return AvatarModel.mocks.shuffled()
+    }
+    
+    func incrementAvatarClickCount(avatarId: String) async throws {
+        
     }
 }
