@@ -114,5 +114,5 @@ struct ChatsView: View {
 
 #Preview {
     ChatsView()
-        .environment(AvatarManager(service: MockAvatarService()))
+        .environment(AvatarManager(service: MockAvatarService(avatars: AvatarModel.mocks)))
 }
