@@ -35,7 +35,7 @@ struct AnyAppAlert: Sendable {
 }
 
 enum AlertType {
-    case alert, confrimationDialog
+    case alert, confirmationDialog
 }
 
 extension View {
@@ -53,7 +53,7 @@ extension View {
                     }
                 }
             
-        case .confrimationDialog:
+        case .confirmationDialog:
             self
                 .confirmationDialog(alert.wrappedValue?.title ?? "", isPresented: Binding(ifNotNil: alert)) {
                     alert.wrappedValue?.buttons()

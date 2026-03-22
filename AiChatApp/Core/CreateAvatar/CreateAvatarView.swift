@@ -186,7 +186,7 @@ struct CreateAvatarView: View {
                     characterLocation: characterLocation,
                     profileImageName: nil,
                     authorId: uid,
-                    createdDate: .now
+                    dateCreated: .now
                 )
                 
                 // upload

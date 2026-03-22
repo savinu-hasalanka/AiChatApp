@@ -9,8 +9,10 @@ import SwiftUI
 
 struct ChatView: View {
     
+    @Environment(AvatarManager.self) private var avatarManager
+    
     @State private var chatMessages: [ChatMessageModel] = ChatMessageModel.mocks
-    @State private var avatar: AvatarModel? = .mock
+    @State private var avatar: AvatarModel?
     @State private var currentUser: UserModel? = .mock
     @State private var textFieldText: String = ""
     @State private var scrollPosition: String?
@@ -19,7 +21,7 @@ struct ChatView: View {
     @State private var showChatSettings: AnyAppAlert?
     @State private var showProfileModal: Bool = false
     
-    var avatarId: String? = AvatarModel.mock.avatarId
+    var avatarId: String = AvatarModel.mock.avatarId
     
     var body: some View {
         VStack(spacing: 0) {
@@ -38,12 +40,27 @@ struct ChatView: View {
                     }
             }
         }
+        .showCustomAlert(type: .confirmationDialog, alert: $showChatSettings)
         .showCustomAlert(alert: $showAlert)
-        .showCustomAlert(alert: $showChatSettings)
+//        .showCustomAlert(alert: $showChatSettings)
         .showModal(showModal: $showProfileModal) {
             if let avatar {
                 profileModal(avatar: avatar)
             }
+        }
+        .task {
+            await loadAvatar()
+        }
+    }
+    
+    private func loadAvatar() async {
+        do {
+            let avatar = try await avatarManager.getAvatar(id: avatarId)
+            
+            self.avatar = avatar
+            try? avatarManager.addRecentAvatar(avatar: avatar)
+        } catch {
+            print("Error loading avatar: \(error)")
         }
     }
     
@@ -168,5 +185,6 @@ struct ChatView: View {
 #Preview {
     NavigationStack {
         ChatView()
+            .environment(AvatarManager(service: MockAvatarService()))
     }
 }
