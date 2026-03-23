@@ -57,7 +57,27 @@ struct FirebaseAvatarService: RemoteAvatarService {
             .whereField(AvatarModel.CodingKeys.authorId.rawValue, isEqualTo: userId)
             .order(by: AvatarModel.CodingKeys.dateCreated.rawValue, descending: true)
             .getAllDocuments()
-            .sorted(by: { ($0.dateCreated ?? .distantPast) > ($1.dateCreated ?? .distantPast)})
+//            .sorted(by: { ($0.dateCreated ?? .distantPast) > ($1.dateCreated ?? .distantPast)})
+    }
+    
+    func removeAuthorIdFromAvatar(avatarId: String) async throws {
+        try await collection.document().updateData([
+            AvatarModel.CodingKeys.authorId.rawValue: NSNull()
+        ])
+    }
+    
+    func removeAuthorIdFromAllUserAvatars(userId: String) async throws {
+        let avatars = try await getAvatarsForAuthor(userId: userId)
+        
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for avatar in avatars {
+                group.addTask {
+                    try await removeAuthorIdFromAvatar(avatarId: avatar.avatarId)
+                }
+            }
+            
+            try await group.waitForAll()
+        }
     }
     
     func incrementAvatarClickCount(avatarId: String) async throws {
@@ -65,6 +85,4 @@ struct FirebaseAvatarService: RemoteAvatarService {
             AvatarModel.CodingKeys.clickCount.rawValue: FieldValue.increment(Int64(1))
         ])
     }
-    
-    
 }
