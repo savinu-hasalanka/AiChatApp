@@ -11,7 +11,7 @@ struct ChatMessageModel: Identifiable {
     let id: String
     let chatId: String
     let authorID: String?
-    let content: String?
+    let content: AIChatModel?
     let seenByIds: [String]?
     let dateCreated: Date?
     
@@ -19,7 +19,7 @@ struct ChatMessageModel: Identifiable {
         id: String,
         chatId: String,
         authorID: String? = nil,
-        content: String? = nil,
+        content: AIChatModel? = nil,
         seenByIds: [String]? = nil,
         dateCreated: Date? = nil
     ) {
@@ -46,7 +46,7 @@ struct ChatMessageModel: Identifiable {
                 id: "msg-001",
                 chatId: "chat-001",
                 authorID: "user-001",
-                content: "Hey! How’s it going?",
+                content: AIChatModel(role: .user, content: "Hey! How’s it going?"),
                 seenByIds: ["user-002"],
                 dateCreated: Date().addingTimeInterval(days: -2, hours: -3)
             ),
@@ -54,7 +54,7 @@ struct ChatMessageModel: Identifiable {
                 id: "msg-002",
                 chatId: "chat-001",
                 authorID: "user-002",
-                content: "All good 😄 What about you?",
+                content: AIChatModel(role: .assistant, content: "All good 😄 What about you?"),
                 seenByIds: ["user-001", "user-002"],
                 dateCreated: Date().addingTimeInterval(days: -2, hours: -2, minutes: -30)
             ),
@@ -62,7 +62,7 @@ struct ChatMessageModel: Identifiable {
                 id: "msg-003",
                 chatId: "chat-002",
                 authorID: "user-003",
-                content: "Did you check the latest build?",
+                content: AIChatModel(role: .user, content: "Did you check the latest build?"),
                 seenByIds: nil,
                 dateCreated: Date().addingTimeInterval(days: -1, hours: -5)
             ),
@@ -70,7 +70,7 @@ struct ChatMessageModel: Identifiable {
                 id: "msg-004",
                 chatId: "chat-003",
                 authorID: "user-001",
-                content: "Let’s sync tomorrow.",
+                content: AIChatModel(role: .assistant, content: "Let’s sync tomorrow."),
                 seenByIds: ["user-004"],
                 dateCreated: Date().addingTimeInterval(hours: -3)
             )
