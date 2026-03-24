@@ -39,7 +39,7 @@ struct ChatBubbleViewBuilder: View {
                 message: ChatMessageModel(
                     id: UUID().uuidString,
                     chatId: UUID().uuidString,
-                    authorID: UUID().uuidString,
+                    authorId: UUID().uuidString,
                     content: AIChatModel(role: .user, content: "This is some long content that goes on to multiple lines. This is some long content that goes on to multiple lines."),
                     seenByIds: nil,
                     dateCreated: .now
@@ -49,7 +49,7 @@ struct ChatBubbleViewBuilder: View {
                 message: ChatMessageModel(
                     id: UUID().uuidString,
                     chatId: UUID().uuidString,
-                    authorID: UUID().uuidString,
+                    authorId: UUID().uuidString,
                     content: AIChatModel(role: .user, content: "This is some long content that goes on to multiple lines. This is some long content that goes on to multiple lines."),
                     seenByIds: nil,
                     dateCreated: .now

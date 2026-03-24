@@ -60,7 +60,7 @@ struct OpenAIService: AIService {
     }  
 }
 
-struct AIChatModel {
+struct AIChatModel: Codable {
     let role: AIChatRole
     let message: String
     
@@ -91,6 +91,11 @@ struct AIChatModel {
             
     }
     
+    enum CodingKeys: CodingKey {
+        case role
+        case message
+    }
+    
     func toOpenAIModel() -> ChatQuery.ChatCompletionMessageParam? {
         ChatQuery.ChatCompletionMessageParam(
             role: role.openAIRole
@@ -102,7 +107,7 @@ struct AIChatModel {
     }
 }
 
-enum AIChatRole {
+enum AIChatRole: String, Codable {
     case system, user, assistant, tool, developer
     
     init(role: ChatQuery.ChatCompletionMessageParam.Role) {
