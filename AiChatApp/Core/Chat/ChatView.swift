@@ -9,12 +9,17 @@ import SwiftUI
 
 struct ChatView: View {
     
+    @Environment(AuthManager.self) private var authManager
+    @Environment(UserManager.self) private var userManager
     @Environment(AvatarManager.self) private var avatarManager
     @Environment(AIManager.self) private var aiManager
+    @Environment(ChatManager.self) private var chatManager
     
     @State private var chatMessages: [ChatMessageModel] = ChatMessageModel.mocks
     @State private var avatar: AvatarModel?
-    @State private var currentUser: UserModel? = .mock
+    @State private var currentUser: UserModel?
+    @State private var chat: ChatModel?
+    
     @State private var textFieldText: String = ""
     @State private var scrollPosition: String?
     
@@ -29,7 +34,7 @@ struct ChatView: View {
             scrollSection
             textFieldSection
         }
-        .navigationTitle(avatar?.name ?? "Chat")
+        .navigationTitle(avatar?.name ?? "")
         .toolbarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -52,6 +57,13 @@ struct ChatView: View {
         .task {
             await loadAvatar()
         }
+        .onAppear {
+            loadCurrentUser()
+        }
+    }
+    
+    private func loadCurrentUser() {
+        currentUser = userManager.currentUser
     }
     
     private func loadAvatar() async {
@@ -69,10 +81,11 @@ struct ChatView: View {
         ScrollView {
             LazyVStack(spacing: 24) {
                 ForEach(chatMessages) { message in
-                    let isCurrentUser = message.authorID == currentUser?.userID
+                    let isCurrentUser = message.authorID == authManager.auth?.uid
                     ChatBubbleViewBuilder(
                         message: message,
                         isCurrentUser: isCurrentUser,
+                        currentUserProfileColor: currentUser?.profileColorCalculated ?? .accent,
                         imageName: isCurrentUser ? nil : avatar?.profileImageName,
                         onImagePressed: onAvatarImagePressed
                     )
@@ -135,42 +148,32 @@ struct ChatView: View {
     }
     
     private func onSendMessagePressed() {
-        guard let currentUser else { return }
-        
         let content = textFieldText
         
         Task {
             do {
+                let uid = try authManager.getAuthId()
                 try TextValidationHelper.checkIfTextIsValid(text: content)
                 
-                let newChatMessage = AIChatModel(role: .user, content: content)
+                if chat == nil {
+                    // If chat is nil, then create a new chat
+                    let newChat = ChatModel.new(userId: uid, avatarId: avatarId)
+                    try await chatManager.createNewChat(chat: newChat)
+                    chat = newChat
+                }
                 
-                let message = ChatMessageModel(
-                    id: UUID().uuidString,
-                    chatId: UUID().uuidString,
-                    authorID: currentUser.userID,
-                    content: newChatMessage,
-                    seenByIds: nil,
-                    dateCreated: .now
-                )
+                let newChatMessage = AIChatModel(role: .user, content: content)
+                let chatId = UUID().uuidString
+                let message = ChatMessageModel.newUserMessage(chatId: chatId, userID: uid, message: newChatMessage)
                 
                 chatMessages.append(message)
                 scrollPosition = message.id
                 textFieldText = ""
                 
                 let aiChats = chatMessages.compactMap({ $0.content })
-                
                 let response = try await aiManager.generateText(chats: aiChats)
-                
-                let newAIMessage = ChatMessageModel(
-                    id: UUID().uuidString,
-                    chatId: UUID().uuidString,
-                    authorID: avatarId,
-                    content: response,
-                    seenByIds: nil,
-                    dateCreated: .now
-                )
-                
+                let newAIMessage = ChatMessageModel.newAIMessage(chatId: chatId, avatarId: avatarId, message: response)
+                                
                 chatMessages.append(newAIMessage)
             } catch {
                 showAlert = AnyAppAlert(error: error)

@@ -7,12 +7,30 @@
 
 import Foundation
 
-struct ChatModel: Identifiable {
+struct ChatModel: Identifiable, Codable {
     let id: String
     let userId: String
     let avatarId: String
     let createdDate: Date
     let modifiedDate: Date
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case userId = "user_id"
+        case avatarId = "avatar_id"
+        case createdDate = "created_date"
+        case modifiedDate = "modified_date"
+    }
+    
+    static func new(userId: String, avatarId: String) -> Self {
+        ChatModel(
+            id: "\(userId)_\(avatarId)",
+            userId: userId,
+            avatarId: avatarId,
+            createdDate: .now,
+            modifiedDate: .now
+        )
+    }
     
     static var mock: Self {
         mocks[0]

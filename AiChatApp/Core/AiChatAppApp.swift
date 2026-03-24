@@ -16,45 +16,49 @@ struct AiChatAppApp: App {
     var body: some Scene {
         WindowGroup {
             AppView()
+                .environment(delegate.dependencies.chatManager)
                 .environment(delegate.dependencies.aiManager)
                 .environment(delegate.dependencies.avatarManager)
                 .environment(delegate.dependencies.userManager)
-                .environment(delegate.dependencies.authManageer)
+                .environment(delegate.dependencies.authManager)
         }
     }
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-    var dependencies: Depedencies!
+    var dependencies: Dependencies!
   
     func application(_ application: UIApplication,
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         
         FirebaseApp.configure()
         
-        dependencies = Depedencies()
+        dependencies = Dependencies()
         
         return true
   }
 }
 
-struct Depedencies {
-    let authManageer: AuthManager
+struct Dependencies {
+    let authManager: AuthManager
     let userManager: UserManager
     let aiManager: AIManager
     let avatarManager: AvatarManager
+    let chatManager: ChatManager
 
     init() {
-        authManageer = AuthManager(service: FirebaseAuthService())
+        authManager = AuthManager(service: FirebaseAuthService())
         userManager = UserManager(services: ProductionUserServices())
         aiManager = AIManager(service: OpenAIService())
         avatarManager = AvatarManager(service: FirebaseAvatarService(), local: SwiftDataLocalAvatarPersistence())
+        chatManager = ChatManager(service: FirebaseChatService())
     }
 }
 
 extension View {
     func previewEnvironment(isSignedIn: Bool = true) -> some View {
         self
+            .environment(ChatManager(service: MockChatService()))
             .environment(AIManager(service: MockAIService()))
             .environment(AvatarManager(service: MockAvatarService()))
             .environment(UserManager(services: MockUserServices(user: isSignedIn ? .mock : nil)))
