@@ -48,7 +48,7 @@ struct OpenAIService: AIService {
     func generateText(chats: [AIChatModel]) async throws -> AIChatModel {
         let messages = chats.compactMap({ $0.toOpenAIModel() })
         let query = ChatQuery(messages: messages, model: .gpt3_5Turbo)
-        let result = try await openAI.chats(query: query)
+        _ = try await openAI.chats(query: query)
         
         guard
 //            let chat = result.choices.first?.message,
