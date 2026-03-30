@@ -9,10 +9,13 @@ import SwiftUI
 
 struct ChatsView: View {
     
+    @Environment(AuthManager.self) private var authManager
     @Environment(AvatarManager.self) private var avatarManager
+    @Environment(ChatManager.self) private var chatManager
     
-    @State private var chats: [ChatModel] = ChatModel.mocks
-    @State private var recentAvatars: [AvatarModel] = AvatarModel.mocks
+    @State private var chats: [ChatModel] = []
+    @State private var isLoadingChats: Bool = true
+    @State private var recentAvatars: [AvatarModel] = []
     @State private var path: [NavigationPathOption] = []
     
     var body: some View {
@@ -28,6 +31,9 @@ struct ChatsView: View {
             .onAppear {
                 loadRecentAvatars()
             }
+            .task {
+                await loadChats()
+            }
         }
     }
     
@@ -40,9 +46,26 @@ struct ChatsView: View {
             
     }
     
+    private func loadChats() async {
+        do {
+            let uid = try authManager.getAuthId()
+            chats = try await chatManager.getAllChats(userId: uid)
+                .sortedByKeyPath(keyPath: \.modifiedDate, ascending: false)
+        } catch {
+            print("Failed to load chats.")
+        }
+        
+        isLoadingChats = false
+    }
+    
     private var chatSection: some View {
         Section {
-            if chats.isEmpty {
+            if isLoadingChats {
+                ProgressView()
+                    .padding(40)
+                    .frame(maxWidth: .infinity)
+                    .removeListRowFormatting()
+            } else if chats.isEmpty {
                 Text("Your chats will appear here!")
                     .font(.title3)
                     .foregroundStyle(.secondary)
@@ -53,22 +76,20 @@ struct ChatsView: View {
             } else {
                 ForEach(chats) { chat in
                     ChatRowCellViewBuilder(
-                        currentUserId: nil,
+                        currentUserId: authManager.auth?.uid,
                         chat: chat) {
-                            try? await Task.sleep(for: .seconds(1))
-                            return .mock
+                            try? await avatarManager.getAvatar(id: chat.avatarId)
                         } getLastChatMessage: {
-                            try? await Task.sleep(for: .seconds(1))
-                            return .mock
+                            try? await chatManager.getLastChatMessage(chatId: chat.id)
                         }
                         .anyButton(.highlight) {
-                            onChatPresssed(chat: chat)
+                            onChatPressed(chat: chat)
                         }
                         .removeListRowFormatting()
                 }
             }
         } header: {
-            Text("CHATS")
+            Text(chats.isEmpty ? "" : "CHATS")
         }
     }
     
@@ -88,7 +109,7 @@ struct ChatsView: View {
                                     .foregroundStyle(.secondary)
                             }
                             .anyButton {
-                                onAvatarPresssed(avatar: avatar)
+                                onAvatarPressed(avatar: avatar)
                             }
                         }
                     }
@@ -103,16 +124,34 @@ struct ChatsView: View {
         }
     }
     
-    private func onChatPresssed(chat: ChatModel) {
-        path.append(.chat(avatarId: chat.avatarId))
+    private func onChatPressed(chat: ChatModel) {
+        path.append(.chat(avatarId: chat.avatarId, chat: chat))
     }
     
-    private func onAvatarPresssed(avatar: AvatarModel) {
-        path.append(.chat(avatarId: avatar.avatarId))
+    private func onAvatarPressed(avatar: AvatarModel) {
+        path.append(.chat(avatarId: avatar.avatarId, chat: nil))
     }
 }
 
-#Preview {
+#Preview("Has data") {
     ChatsView()
-        .environment(AvatarManager(service: MockAvatarService(avatars: AvatarModel.mocks)))
+        .previewEnvironment()
+}
+
+#Preview("No data") {
+    ChatsView()
+        .environment(
+            AvatarManager(
+                service: MockAvatarService(avatars: []),
+                local: MockLocalAvatarPersistence(avatars: [])
+            )
+        )
+        .environment(ChatManager(service: MockChatService(chats: [])))
+        .previewEnvironment()
+}
+
+#Preview("Slow loading chats") {
+    ChatsView()
+        .environment(ChatManager(service: MockChatService(delay: 5)))
+        .previewEnvironment()
 }

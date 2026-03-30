@@ -8,7 +8,7 @@
 import Foundation
 import IdentifiableByString
 
-struct ChatModel: Identifiable, Codable, StringIdentifiable {
+struct ChatModel: Identifiable, Codable, Hashable, StringIdentifiable {
     let id: String
     let userId: String
     let avatarId: String
@@ -45,29 +45,29 @@ struct ChatModel: Identifiable, Codable, StringIdentifiable {
         [
             ChatModel(
                 id: "mock_chat_001",
-                userId: "user-001",
-                avatarId: "avatar-001",
+                userId: UserAuthInfo.mock().uid,
+                avatarId: AvatarModel.mocks.randomElement()!.avatarId,
                 createdDate: Date().addingTimeInterval(days: -5),
                 modifiedDate: Date().addingTimeInterval(days: -2)
             ),
             ChatModel(
                 id: "mock_chat_002",
-                userId: "user-002",
-                avatarId: "avatar-002",
+                userId: UserAuthInfo.mock().uid,
+                avatarId: AvatarModel.mocks.randomElement()!.avatarId,
                 createdDate: Date().addingTimeInterval(days: -10),
                 modifiedDate: Date().addingTimeInterval(days: -7)
             ),
             ChatModel(
                 id: "mock_chat_003",
-                userId: "user-003",
-                avatarId: "avatar-003",
+                userId: UserAuthInfo.mock().uid,
+                avatarId: AvatarModel.mocks.randomElement()!.avatarId,
                 createdDate: Date().addingTimeInterval(days: -1),
                 modifiedDate: Date().addingTimeInterval(hours: -3)
             ),
             ChatModel(
                 id: "mock_chat_004",
-                userId: "user-004",
-                avatarId: "avatar-004",
+                userId: UserAuthInfo.mock().uid,
+                avatarId: AvatarModel.mocks.randomElement()!.avatarId,
                 createdDate: Date().addingTimeInterval(days: -30),
                 modifiedDate: Date().addingTimeInterval(days: -25)
             )

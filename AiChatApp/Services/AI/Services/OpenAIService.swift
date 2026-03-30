@@ -51,7 +51,7 @@ struct OpenAIService: AIService {
         let result = try await openAI.chats(query: query)
         
         guard
-            let chat = result.choices.first?.message,
+//            let chat = result.choices.first?.message,
 //            let model = AIChatModel(chat: chat)
             let model = AIChatModel(chat: "chat")
         else {

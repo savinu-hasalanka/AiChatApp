@@ -126,7 +126,7 @@ struct ExploreView: View {
                         imageName: avatar.profileImageName
                     )
                     .anyButton {
-                        onAvatarPresssed(avatar: avatar)
+                        onAvatarPressed(avatar: avatar)
                     }
                 }
             }
@@ -150,7 +150,7 @@ struct ExploreView: View {
                                 )
                                 .frame(height: 140)
                                 .anyButton {
-                                    onCategoryPresssed(category: category, imageName: imageName)
+                                    onCategoryPressed(category: category, imageName: imageName)
                                 }
                             }
                         }
@@ -177,7 +177,7 @@ struct ExploreView: View {
                     imageName: avatar.profileImageName
                 )
                 .anyButton(.highlight, action: {
-                    onAvatarPresssed(avatar: avatar)
+                    onAvatarPressed(avatar: avatar)
                 })
                 .removeListRowFormatting()
             }
@@ -186,11 +186,11 @@ struct ExploreView: View {
         }
     }
     
-    private func onAvatarPresssed(avatar: AvatarModel) {
-        path.append(.chat(avatarId: avatar.avatarId))
+    private func onAvatarPressed(avatar: AvatarModel) {
+        path.append(.chat(avatarId: avatar.avatarId, chat: nil))
     }
     
-    private func onCategoryPresssed(category: CharacterOption, imageName: String) {
+    private func onCategoryPressed(category: CharacterOption, imageName: String) {
         path.append(.category(category: category, imageName: imageName))
     }
 }

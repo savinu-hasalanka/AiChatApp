@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import IdentifiableByString
 
-struct ChatMessageModel: Identifiable, Codable {
+struct ChatMessageModel: Identifiable, Codable, StringIdentifiable {
     let id: String
     let chatId: String
     let authorId: String?
@@ -88,7 +89,7 @@ struct ChatMessageModel: Identifiable, Codable {
             ChatMessageModel(
                 id: "msg-002",
                 chatId: "chat-001",
-                authorId: "user-002",
+                authorId: AvatarModel.mock.avatarId,
                 content: AIChatModel(role: .assistant, content: "All good 😄 What about you?"),
                 seenByIds: ["user-001", "user-002"],
                 dateCreated: Date().addingTimeInterval(days: -2, hours: -2, minutes: -30)
@@ -104,7 +105,7 @@ struct ChatMessageModel: Identifiable, Codable {
             ChatMessageModel(
                 id: "msg-004",
                 chatId: "chat-003",
-                authorId: "user-001",
+                authorId: AvatarModel.mock.avatarId,
                 content: AIChatModel(role: .assistant, content: "Let’s sync tomorrow."),
                 seenByIds: ["user-004"],
                 dateCreated: Date().addingTimeInterval(hours: -3)

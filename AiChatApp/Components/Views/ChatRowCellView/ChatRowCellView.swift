@@ -40,6 +40,7 @@ struct ChatRowCellView: View {
                 }
                 
             }
+            .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
             
             if hasNewChat {

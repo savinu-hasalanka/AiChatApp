@@ -8,22 +8,59 @@
 protocol ChatService: Sendable {
     func createNewChat(chat: ChatModel) async throws
     func getChat(userId: String, avatarId: String) async throws -> ChatModel?
+    func getAllChats(userId: String) async throws -> [ChatModel]
     func addChatMessage(chatId: String, message: ChatMessageModel) async throws
+    func getLastChatMessage(chatId: String) async throws -> ChatMessageModel?
     func streamChatMessage(chatId: String) -> AsyncThrowingStream<[ChatMessageModel], Error>
 }
 
 struct MockChatService: ChatService {
+    
+    let chats: [ChatModel]
+    let delay: Double
+    let showError: Bool
+    
+    init(chats: [ChatModel] = ChatModel.mocks, delay: Double = 0.0, showError: Bool = false) {
+        self.chats = chats
+        self.delay = delay
+        self.showError = showError
+    }
+    
+    private func tryShowError() throws {
+        if showError {
+            throw URLError(.unknown)
+        }
+    }
     
     func createNewChat(chat: ChatModel) async throws {
         
     }
     
     func getChat(userId: String, avatarId: String) async throws -> ChatModel?  {
-        ChatModel.mock
+        try await Task.sleep(for: .seconds(delay))
+        try tryShowError()
+        
+        return chats.first { chat in
+            return chat.userId == userId && chat.avatarId == avatarId
+        }
+    }
+    
+    func getAllChats(userId: String) async throws -> [ChatModel] {
+        try await Task.sleep(for: .seconds(delay))
+        try tryShowError()
+        
+        return chats
     }
     
     func addChatMessage(chatId: String, message: ChatMessageModel) async throws {
         
+    }
+    
+    func getLastChatMessage(chatId: String) async throws -> ChatMessageModel? {
+        try await Task.sleep(for: .seconds(delay))
+        try tryShowError()
+        
+        return ChatMessageModel.mocks.randomElement()
     }
     
     func streamChatMessage(chatId: String) -> AsyncThrowingStream<[ChatMessageModel], Error> {
@@ -62,6 +99,12 @@ struct FirebaseChatService: ChatService {
         
     }
     
+    func getAllChats(userId: String) async throws -> [ChatModel] {
+        try await collection
+            .whereField(ChatModel.CodingKeys.userId.rawValue, isEqualTo: userId)
+            .getAllDocuments()
+    }
+    
     func addChatMessage(chatId: String, message: ChatMessageModel) async throws {
         // Add message to the messages sub collection
         try messageCollection(chatId: chatId).document(message.id).setData(from: message, merge: true)
@@ -70,6 +113,15 @@ struct FirebaseChatService: ChatService {
         try await collection.document(chatId).updateData([
             ChatModel.CodingKeys.modifiedDate: Date.now
         ])
+    }
+    
+    func getLastChatMessage(chatId: String) async throws -> ChatMessageModel? {
+        let messages: [ChatMessageModel] = try await messageCollection(chatId: chatId)
+            .order(by: ChatMessageModel.CodingKeys.dateCreated.rawValue, descending: true)
+            .limit(to: 1)
+            .getAllDocuments()
+        
+        return messages.first
     }
     
     func streamChatMessage(chatId: String) -> AsyncThrowingStream<[ChatMessageModel], Error> {
@@ -96,8 +148,16 @@ class ChatManager {
         try await service.getChat(userId: userId, avatarId: avatarId)
     }
     
+    func getAllChats(userId: String) async throws -> [ChatModel] {
+        try await service.getAllChats(userId: userId)
+    }
+    
     func addChatMessage(chatId: String, message: ChatMessageModel) async throws {
         try await service.addChatMessage(chatId: chatId, message: message)
+    }
+    
+    func getLastChatMessage(chatId: String) async throws -> ChatMessageModel? {
+        try await service.getLastChatMessage(chatId: chatId)
     }
     
     func streamChatMessage(chatId: String) -> AsyncThrowingStream<[ChatMessageModel], Error> {
