@@ -4,10 +4,43 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>AiChatApp.xcscheme_^#shared#^_</key>
+		<key>AiChatApp - Development.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
+		<key>AiChatApp - Mock.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
+		<key>AiChatApp - Production.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+		<key>Promises (Playground).xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>BA7C12C62F28D61C001A2FF8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BA7C12D32F28D61D001A2FF8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BA7C12DD2F28D61D001A2FF8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>
