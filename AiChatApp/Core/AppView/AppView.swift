@@ -30,14 +30,24 @@ struct AppView: View {
         .task {
             await checkUserStatus()
         }
-        .onAppear(perform: {
-            logManager.identifyUser(userId: "abc123", name: "savinu", email: "savinu@abc.com")
-            logManager.addUserProperties(dict: UserModel.mock.eventParameters)
-            
-            logManager.trackEvent(event: Event.alpha)
-            logManager.trackEvent(event: Event.beta)
-            logManager.trackEvent(event: Event.gamma)
-            logManager.trackEvent(event: Event.delta)
+        .onAppear(
+            perform: {
+                logManager.identifyUser(userId: "abc123", name: "savinu", email: "savinu@abc.com")
+                logManager.addUserProperties(dict: UserModel.mock.eventParameters, isHighPriority: false)
+                
+                logManager.trackEvent(event: Event.alpha)
+                logManager.trackEvent(event: Event.beta)
+                logManager.trackEvent(event: Event.gamma)
+                logManager.trackEvent(event: Event.delta)
+//                
+                let event = AnyLoggableEvent(
+                    eventName: "abc",
+                    parameters: UserModel.mock.eventParameters,
+                    type: .analytics
+                )
+                
+                logManager.trackEvent(event: event)
+                logManager.trackEvent(eventName: "new event")
         })
         .onChange(of: appState.showTabBar) { _, showTabBar in
             if !showTabBar {

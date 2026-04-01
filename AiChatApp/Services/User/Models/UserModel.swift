@@ -88,25 +88,25 @@ struct UserModel: Codable {
     static var mocks: [Self] {
         [
             UserModel(
-                userID: "user-001",
+                userID: "user_001",
                 creationDate: Date().addingTimeInterval(days: -60),
                 didCompleteOnboarding: true,
                 profileColorHex: "#4ECDC4"
             ),
             UserModel(
-                userID: "user-002",
+                userID: "user_002",
                 creationDate: Date().addingTimeInterval(days: -45),
                 didCompleteOnboarding: true,
                 profileColorHex: "#FF6B6B"
             ),
             UserModel(
-                userID: "user-003",
+                userID: "user_003",
                 creationDate: Date().addingTimeInterval(days: -20),
                 didCompleteOnboarding: false,
                 profileColorHex: "#1A535C"
             ),
             UserModel(
-                userID: "user-004",
+                userID: "user_004",
                 creationDate: Date().addingTimeInterval(days: -10),
                 didCompleteOnboarding: true,
                 profileColorHex: "#FFE66D"
