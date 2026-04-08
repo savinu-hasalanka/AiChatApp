@@ -23,6 +23,18 @@ struct ChatModel: Identifiable, Codable, Hashable, StringIdentifiable {
         case modifiedDate = "modified_date"
     }
     
+    var eventParameters: [String: Any] {
+        let dict: [String: Any?] = [
+            "chat_\(CodingKeys.id.rawValue)": id,
+            "chat_\(CodingKeys.userId.rawValue)": userId,
+            "chat_\(CodingKeys.avatarId.rawValue)": avatarId,
+            "chat_\(CodingKeys.createdDate.rawValue)": createdDate,
+            "chat_\(CodingKeys.modifiedDate.rawValue)": modifiedDate
+        ]
+        
+        return dict.compactMapValues({ $0 })
+    }
+    
     static func chatId(userId: String, avatarId: String) -> String {
             "\(userId)_\(avatarId)"
     }

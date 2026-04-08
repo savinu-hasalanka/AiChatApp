@@ -97,9 +97,18 @@ struct AIChatModel: Codable {
             
     }
     
-    enum CodingKeys: CodingKey {
-        case role
-        case message
+    enum CodingKeys: String, CodingKey {
+        case role = "role"
+        case message = "message"
+    }
+    
+    var eventParameters: [String: Any] {
+        let dict: [String: Any?] = [
+            "aichat_\(CodingKeys.role.rawValue)": role.rawValue,
+            "aichat_\(CodingKeys.message.rawValue)": message
+        ]
+        
+        return dict.compactMapValues({ $0 })
     }
     
     func toOpenAIModel() -> ChatQuery.ChatCompletionMessageParam? {
