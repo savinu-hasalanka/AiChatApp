@@ -30,7 +30,6 @@ struct AppView: View {
         .task {
             await checkUserStatus()
         }
-        .screenAppearAnalytics(name: "AppView")
         .onChange(of: appState.showTabBar) { _, showTabBar in
             if !showTabBar {
                 Task {

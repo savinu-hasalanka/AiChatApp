@@ -43,7 +43,7 @@ struct CreateAvatarView: View {
                 }
             }
             .showCustomAlert(alert: $showAlert)
-            .screenAppearAnalytics(name: "CreateAvatar")
+            .screenAppearAnalytics(name: "CreateAvatarView")
         }
     }
     
