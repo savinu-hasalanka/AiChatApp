@@ -54,15 +54,15 @@ enum CharacterLocation: String, CaseIterable, Hashable, Codable {
     }
 }
 
-struct AvatarDescriptionBuilder {
+struct AvatarDescriptionBuilder: Codable {
     let characterOption: CharacterOption
     let characterAction: CharacterAction
     let characterLocation: CharacterLocation
     
-    init(charaterOption: CharacterOption, charaterAction: CharacterAction, charaterLocation: CharacterLocation) {
-        self.characterOption = charaterOption
-        self.characterAction = charaterAction
-        self.characterLocation = charaterLocation
+    init(characterOption: CharacterOption, characterAction: CharacterAction, characterLocation: CharacterLocation) {
+        self.characterOption = characterOption
+        self.characterAction = characterAction
+        self.characterLocation = characterLocation
     }
     
     init(avatar: AvatarModel) {
@@ -71,8 +71,23 @@ struct AvatarDescriptionBuilder {
         self.characterLocation = avatar.characterLocation ?? .default
     }
     
+    enum CodingKeys: String, CodingKey {
+        case characterOption = "character_option"
+        case characterAction = "character_action"
+        case characterLocation = "character_location"
+    }
+    
     var characterDescription: String {
         let prefix = characterOption.startsWithVowel ? "An" : "A"
         return "\(prefix) \(characterOption.rawValue) that is \(characterAction.rawValue) in the \(characterLocation.rawValue)."
+    }
+    
+    var eventParameters: [String: Any] {
+        [
+            CodingKeys.characterOption.rawValue: characterOption,
+            CodingKeys.characterAction.rawValue: characterAction,
+            CodingKeys.characterLocation.rawValue: characterLocation,
+            "characterDescription": characterDescription
+        ]
     }
 }
