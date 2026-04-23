@@ -26,6 +26,10 @@ struct FirebaseAuthService: AuthService {
         }
     }
     
+    func removeAuthenticatedUserListener(listener: any NSObjectProtocol) {
+        Auth.auth().removeStateDidChangeListener(listener)
+    }
+    
     func getAuthenticatedUser() -> UserAuthInfo? {
         if let user = Auth.auth().currentUser {
             return UserAuthInfo(user: user)
@@ -85,16 +89,52 @@ struct FirebaseAuthService: AuthService {
             throw AuthError.userNotFound
         }
         
-        try await user.delete()
+        do {
+            try await user.delete()
+        } catch let error as NSError {
+            
+            let authError = AuthErrorCode(rawValue: error.code)
+            switch authError {
+            case .requiresRecentLogin:
+                // try to re authenticate user
+                try await reAuthenticateUser(error: error)
+                
+                // Re authentication successful
+                return try await user.delete()
+            default:
+                throw error
+            }
+        }
+    }
+    
+    private func reAuthenticateUser(error: Error) async throws {
+        guard let user = Auth.auth().currentUser, let providerID = user.providerData.first?.providerID else {
+            throw AuthError.userNotFound
+        }
+        
+        switch providerID {
+        case "apple.com":
+            let result = try await signInWithApple()
+            
+            guard user.uid == result.user.uid else {
+                throw AuthError.reAuthAccountChanged
+            }
+            
+        default:
+            throw error
+        }
     }
     
     enum AuthError: LocalizedError {
         case userNotFound
+        case reAuthAccountChanged
         
         var errorDescription: String? {
             switch(self) {
             case .userNotFound:
                 return "Current authenticated user not found."
+            case .reAuthAccountChanged:
+                return "Re Authentication switched accounts. Please check your account."
             }
         }
     }
