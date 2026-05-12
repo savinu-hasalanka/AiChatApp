@@ -62,9 +62,16 @@ enum BuildConfiguration {
             let options = FirebaseOptions(contentsOfFile: plist)!
             FirebaseApp.configure(options: options)
         case .prod:
-            let plist = Bundle.main.path(forResource: "GoogleService-Info-Prod", ofType: "plist")!
-            let options = FirebaseOptions(contentsOfFile: plist)!
-            FirebaseApp.configure(options: options)
+//            let plist = Bundle.main.path(forResource: "GoogleService-Info-Prod", ofType: "plist")!
+//            let options = FirebaseOptions(contentsOfFile: plist)!
+//            FirebaseApp.configure(options: options)
+            
+            guard let plistPath = Bundle.main.path(forResource: "GoogleService-Info-Prod", ofType: "plist") else {
+                    print("❌ Available resources: \(Bundle.main.paths(forResourcesOfType: "plist", inDirectory: nil))")
+                    fatalError("GoogleService-Info-Prod.plist not found in bundle")
+                }
+                let options = FirebaseOptions(contentsOfFile: plistPath)!
+                FirebaseApp.configure(options: options)
         }
     }
 }
