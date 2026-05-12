@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ExploreView: View {
     
+    @Environment(PushManager.self) private var pushManager: PushManager
     @Environment(AvatarManager.self) private var avatarManager: AvatarManager
     @Environment(LogManager.self) private var logManager: LogManager
     
@@ -22,6 +23,8 @@ struct ExploreView: View {
     
     @State private var path: [NavigationPathOption] = []
     @State private var showDevSettings: Bool = false
+    @State private var showNotificationButton: Bool = false
+    @State private var showPushNotificationModal: Bool = false
     
     private var showDevSettingsButton: Bool {
         #if DEV || MOCK
@@ -62,18 +65,87 @@ struct ExploreView: View {
                         devSettingsButton
                     }
                 }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    if showNotificationButton {
+                        pushNotificationButton
+                    }
+                }
             })
             .sheet(isPresented: $showDevSettings, content: {
                 DevSettingsView()
             })
             .navigationDestinationForCoreModule(path: $path)
+            .showModal(showModal: $showPushNotificationModal, content: {
+                pushNotificationModal
+            })
             .task {
                 await loadFeaturedAvatars()
             }
             .task {
                 await loadPopularAvatars()
             }
+            .task {
+                await handleShowPushNotificationButton()
+            }
+            .onFirstAppear {
+                schedulePushNotifications()
+            }
         }
+    }
+    
+    private func schedulePushNotifications() {
+        pushManager.schedulePushNotificationsForTheNextWeek()
+    }
+    
+    private func handleShowPushNotificationButton() async {
+        showNotificationButton = await pushManager.canRequestAuthorization()
+    }
+    
+    private var pushNotificationButton: some View {
+        Image(systemName: "bell.fill")
+            .font(.headline)
+            .padding(4)
+            .tappableBackground()
+            .foregroundStyle(.accent)
+            .anyButton {
+                onPushNotificationButtonPressed()
+            }
+    }
+    
+    private func onPushNotificationButtonPressed() {
+        showPushNotificationModal = true
+        logManager.trackEvent(event: Event.pushNotifsStart)
+    }
+    
+    private func onEnablePushNotificationsPressed() {
+        showPushNotificationModal = false
+
+        Task {
+            let isAuthorized = try await pushManager.requestAuthorization()
+            logManager.trackEvent(event: Event.pushNotifsEnable(isAuthorized: isAuthorized))
+            await handleShowPushNotificationButton()
+        }
+    }
+    
+    private func onCancelPushNotificationsPressed() {
+        showPushNotificationModal = false
+        logManager.trackEvent(event: Event.pushNotifsCancel)
+    }
+    
+    private var pushNotificationModal: some View {
+        CustomModalView(
+            title: "Enable push notifications?",
+            subtitle: "We'll send you reminders and updates!",
+            primaryButtonTitle: "Enable",
+            primaryButtonAction: {
+                onEnablePushNotificationsPressed()
+            },
+            secondaryButtonTitle: "Cancel",
+            secondaryButtonAction: {
+                onCancelPushNotificationsPressed()
+            }
+        )
     }
     
     private var devSettingsButton: some View {
@@ -95,6 +167,9 @@ struct ExploreView: View {
         case loadPopularAvatarsFail(error: Error)
         case avatarPressed(avatar: AvatarModel)
         case categoryPressed(category: CharacterOption)
+        case pushNotifsStart
+        case pushNotifsEnable(isAuthorized: Bool)
+        case pushNotifsCancel
 
         var eventName: String {
             switch self {
@@ -108,6 +183,9 @@ struct ExploreView: View {
             case .loadPopularAvatarsFail: return "ExploreView_LoadPopularAvatars_Fail"
             case .avatarPressed: return "ExploreView_Avatar_Pressed"
             case .categoryPressed: return "ExploreView_Category_Pressed"
+            case .pushNotifsStart: return "ExploreView_PushNotifs_Start"
+            case .pushNotifsEnable: return "ExploreView_PushNotifs_Enable"
+            case .pushNotifsCancel: return "ExploreView_PushNotifs_Cancel"
             }
         }
         
@@ -124,6 +202,10 @@ struct ExploreView: View {
             case .categoryPressed(category: let category):
                 return [
                     "category": category.rawValue
+                ]
+            case .pushNotifsEnable(isAuthorized: let isAuthorized):
+                return [
+                    "is_authorized": isAuthorized
                 ]
             default:
                 return nil
@@ -295,14 +377,17 @@ struct ExploreView: View {
 #Preview("has data") {
     ExploreView()
         .environment(AvatarManager(service: MockAvatarService()))
+        .previewEnvironment()
 }
 
 #Preview("no data") {
     ExploreView()
         .environment(AvatarManager(service: MockAvatarService(avatars: [], delay: 2.0)))
+        .previewEnvironment()
 }
 
 #Preview("slow loading") {
     ExploreView()
         .environment(AvatarManager(service: MockAvatarService(delay: 10.0)))
+        .previewEnvironment()
 }
