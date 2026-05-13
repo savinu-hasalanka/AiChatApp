@@ -94,6 +94,27 @@ struct ExploreView: View {
         }
     }
     
+    private func handleDeepLink(url: URL) {
+        logManager.trackEvent(event: Event.deeplinkStart)
+        guard
+            let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+            let queryItems = components.queryItems else {
+            logManager.trackEvent(event: Event.deeplinkNoQueryItems)
+            return
+        }
+        
+        for queryItem in queryItems {
+            if queryItem.name == "category", let value = queryItem.value, let category = CharacterOption(rawValue: value) {
+                let imageName = popularAvatars.first(where: { $0.characterOption == category })?.profileImageName ?? Constants.randomImage
+                path.append(.category(category: category, imageName: imageName))
+                logManager.trackEvent(event: Event.deeplinkCategory(category: category))
+                return
+            }
+        }
+        
+        logManager.trackEvent(event: Event.deeplinkUnknown)
+    }
+    
     private func schedulePushNotifications() {
         pushManager.schedulePushNotificationsForTheNextWeek()
     }
@@ -170,6 +191,10 @@ struct ExploreView: View {
         case pushNotifsStart
         case pushNotifsEnable(isAuthorized: Bool)
         case pushNotifsCancel
+        case deeplinkStart
+        case deeplinkNoQueryItems
+        case deeplinkCategory(category: CharacterOption)
+        case deeplinkUnknown
 
         var eventName: String {
             switch self {
@@ -186,6 +211,10 @@ struct ExploreView: View {
             case .pushNotifsStart: return "ExploreView_PushNotifs_Start"
             case .pushNotifsEnable: return "ExploreView_PushNotifs_Enable"
             case .pushNotifsCancel: return "ExploreView_PushNotifs_Cancel"
+            case .deeplinkStart: return "ExploreView_DeepLink_Start"
+            case .deeplinkNoQueryItems: return "ExploreView_DeepLink_NoItems"
+            case .deeplinkCategory: return "ExploreView_DeepLink_Category"
+            case .deeplinkUnknown: return "ExploreView_DeepLink_Unknown"
             }
         }
         
@@ -199,7 +228,7 @@ struct ExploreView: View {
                 return error.eventParameters
             case .avatarPressed(avatar: let avatar):
                 return avatar.eventParameters
-            case .categoryPressed(category: let category):
+            case .categoryPressed(category: let category), .deeplinkCategory(category: let category):
                 return [
                     "category": category.rawValue
                 ]
@@ -214,7 +243,7 @@ struct ExploreView: View {
         
         var type: LogType {
             switch self {
-            case .loadPopularAvatarsFail, .loadFeaturedAvatarsFail:
+            case .loadPopularAvatarsFail, .loadFeaturedAvatarsFail, .deeplinkUnknown:
                 return .severe
             default:
                 return .analytics
