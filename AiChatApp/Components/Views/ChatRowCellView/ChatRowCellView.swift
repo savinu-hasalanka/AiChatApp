@@ -41,6 +41,8 @@ struct ChatRowCellView: View {
                     Text(subheadline)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(1)
                 }
                 
             }
