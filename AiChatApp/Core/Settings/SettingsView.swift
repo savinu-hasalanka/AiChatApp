@@ -30,7 +30,9 @@ struct SettingsView: View {
                 purchaseSection
                 applicationSection
             }
-            .navigationTitle("Settins")
+            .lineLimit(1)
+            .minimumScaleFactor(0.4)
+            .navigationTitle("Settings")
             .showCustomAlert(alert: $showAlert)
             .sheet(isPresented: $showCreateAccountView, onDismiss: {
                 setAnonymousAccountStatus()
@@ -310,14 +312,23 @@ struct SettingsView: View {
     }
 }
 
-fileprivate extension View {
+private struct RowFormattingViewModifier: ViewModifier {
     
-    func rowFormatting() -> some View {
-        self
+    @Environment(\.colorScheme) private var colorScheme
+    
+    func body(content: Content) -> some View {
+        content
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, 12)
             .padding(.horizontal, 16)
-            .background(Color(uiColor: .systemBackground))
+            .background(colorScheme.backgroundPrimary)
+    }
+}
+
+fileprivate extension View {
+    
+    func rowFormatting() -> some View {
+        modifier(RowFormattingViewModifier())
     }
 }
 

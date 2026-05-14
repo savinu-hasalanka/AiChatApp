@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ChatRowCellView: View {
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     var imageName: String? = Constants.randomImage
     var headLine: String? = "Alpha"
     var subheadline: String? = "This is your last message in the chat"
@@ -32,6 +34,8 @@ struct ChatRowCellView: View {
                     Text(headLine)
                         .font(.headline)
                         .fontWeight(.bold)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.5)
                 }
                 if let subheadline {
                     Text(subheadline)
@@ -46,12 +50,15 @@ struct ChatRowCellView: View {
             if hasNewChat {
                 Text("NEW")
                     .badgeButton()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.1)
+                    .frame(maxWidth: 50)
             }
             
         }
         .padding(.vertical, 12)
         .padding(.horizontal, 8)
-        .background(Color(uiColor: UIColor.systemBackground))
+        .background(colorScheme.backgroundPrimary)
     }
 }
 

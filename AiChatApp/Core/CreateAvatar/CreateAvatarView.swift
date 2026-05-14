@@ -62,6 +62,8 @@ struct CreateAvatarView: View {
             TextField("Player 1", text: $avatarName)
         } header: {
             Text("Name your avatar*")
+                .lineLimit(1)
+                .minimumScaleFactor(0.3)
         }
     }
     
@@ -96,6 +98,8 @@ struct CreateAvatarView: View {
             
         } header: {
             Text("Attributes")
+                .lineLimit(1)
+                .minimumScaleFactor(0.3)
         }
     }
     
@@ -106,6 +110,8 @@ struct CreateAvatarView: View {
                     Text("Generate Image")
                         .underline()
                         .foregroundStyle(.accent)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.2)
                         .anyButton {
                             onGenerateImagePressed()
                         }
@@ -127,6 +133,7 @@ struct CreateAvatarView: View {
                         }
                     }
                     .clipShape(Circle())
+                    .frame(maxWidth: .infinity, maxHeight: 400)
             }
             .removeListRowFormatting()
             .padding()
@@ -144,6 +151,9 @@ struct CreateAvatarView: View {
             //                    .padding(.top, 24)
             .opacity(generatedImage == nil ? 0.5 : 1)
             .disabled(generatedImage == nil)
+            .frame(width: 500)
+            .frame(maxWidth: .infinity)
+
         }
     }
     
@@ -259,6 +269,7 @@ struct CreateAvatarView: View {
 
 #Preview {
     CreateAvatarView()
+        .previewEnvironment()
         .environment(AIManager(service: MockAIService()))
         .environment(AvatarManager(service: MockAvatarService(avatars: AvatarModel.mocks)))
         .environment(AuthManager(service: MockAuthService(user: .mock())))

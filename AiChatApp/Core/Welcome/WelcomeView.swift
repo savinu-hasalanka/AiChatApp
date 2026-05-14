@@ -94,10 +94,14 @@ struct WelcomeView: View {
             Text("AI Chat ✌️")
                 .font(.largeTitle)
                 .fontWeight(.semibold)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
             
             Text("LinkedIn @savinu-hasalanka")
                 .font(.caption)
                 .foregroundStyle(Color.secondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
         }
     }
     
@@ -108,8 +112,12 @@ struct WelcomeView: View {
             } label: {
                 Text("Get Started")
                     .callToActionButton()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
             }
-            Text("Already have an account? Sign in.")
+            .frame(maxWidth: 500)
+            
+            Text("Already have an account? Sign in!")
                 .underline()
                 .font(.body)
                 .padding(8)
@@ -117,19 +125,26 @@ struct WelcomeView: View {
                 .onTapGesture {
                     onSignInPressed()
                 }
+                .lineLimit(1)
+                .minimumScaleFactor(0.3)
         }
+        
     }
     
     private var policyLinks: some View {
         HStack(spacing: 8) {
             Link(destination: URL(string: Constants.termsOfServiceUrl)!) {
                 Text("Terms of Service")
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
             }
             Circle()
                 .fill()
                 .frame(width: 4, height: 4)
             Link(destination: URL(string: Constants.privacyPolicyUrl)!) {
                 Text("Privacy Policy")
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
             }
             
         }
@@ -138,4 +153,5 @@ struct WelcomeView: View {
 
 #Preview {
     WelcomeView()
+        .previewEnvironment()
 }
