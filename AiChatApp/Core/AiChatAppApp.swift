@@ -16,6 +16,7 @@ struct AiChatAppApp: App {
     var body: some Scene {
         WindowGroup {
             AppView()
+                .environment(delegate.dependencies.abTestManager)
                 .environment(delegate.dependencies.pushManager)
                 .environment(delegate.dependencies.chatManager)
                 .environment(delegate.dependencies.aiManager)
@@ -85,6 +86,7 @@ struct Dependencies {
     let chatManager: ChatManager
     let logManager: LogManager
     let pushManager: PushManager
+    let abTestManager: ABTestManager
     
     // Mock - mock dependencies
     // Development - production dependencies + some extra dev tools
@@ -101,7 +103,8 @@ struct Dependencies {
             aiManager = AIManager(service: MockAIService())
             avatarManager = AvatarManager(service: MockAvatarService(), local: MockLocalAvatarPersistence())
             chatManager = ChatManager(service: MockChatService())
-            
+            abTestManager = ABTestManager(service: MockABTestService(), logManager: logManager)
+
         case .dev:
             logManager = LogManager(services: [
                 ConsoleService(),
@@ -115,6 +118,7 @@ struct Dependencies {
             aiManager = AIManager(service: MockAIService())
             avatarManager = AvatarManager(service: MockAvatarService(), local: MockLocalAvatarPersistence())
             chatManager = ChatManager(service: MockChatService())
+            abTestManager = ABTestManager(service: MockABTestService(), logManager: logManager)
             
         case .prod:
             logManager = LogManager(services: [
@@ -128,6 +132,7 @@ struct Dependencies {
             aiManager = AIManager(service: OpenAIService())
             avatarManager = AvatarManager(service: FirebaseAvatarService(), local: SwiftDataLocalAvatarPersistence())
             chatManager = ChatManager(service: FirebaseChatService())
+            abTestManager = ABTestManager(service: MockABTestService(), logManager: logManager)
         }
         
         pushManager = PushManager(logManager: logManager)
@@ -137,6 +142,7 @@ struct Dependencies {
 extension View {
     func previewEnvironment(isSignedIn: Bool = true) -> some View {
         self
+            .environment(ABTestManager(service: MockABTestService()))
             .environment(PushManager())
             .environment(ChatManager(service: MockChatService()))
             .environment(AIManager(service: MockAIService()))

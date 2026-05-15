@@ -12,6 +12,8 @@ struct ExploreView: View {
     @Environment(PushManager.self) private var pushManager: PushManager
     @Environment(AvatarManager.self) private var avatarManager: AvatarManager
     @Environment(LogManager.self) private var logManager: LogManager
+    @Environment(AuthManager.self) private var authManager
+    @Environment(ABTestManager.self) private var abTestManager
     
     @State private var categories: [CharacterOption] = CharacterOption.allCases
     
@@ -25,6 +27,7 @@ struct ExploreView: View {
     @State private var showDevSettings: Bool = false
     @State private var showNotificationButton: Bool = false
     @State private var showPushNotificationModal: Bool = false
+    @State private var showCreateAccountView: Bool = false
     
     private var showDevSettingsButton: Bool {
         #if DEV || MOCK
@@ -75,6 +78,10 @@ struct ExploreView: View {
             .sheet(isPresented: $showDevSettings, content: {
                 DevSettingsView()
             })
+            .sheet(isPresented: $showCreateAccountView, content: {
+                CreateAccountView()
+                    .presentationDetents([.medium])
+            })
             .navigationDestinationForCoreModule(path: $path)
             .showModal(showModal: $showPushNotificationModal, content: {
                 pushNotificationModal
@@ -90,6 +97,10 @@ struct ExploreView: View {
             }
             .onFirstAppear {
                 schedulePushNotifications()
+                showCreateAccountScreenIfNeeded()
+            }
+            .onOpenURL { url in
+                handleDeepLink(url: url)
             }
         }
     }
@@ -117,6 +128,23 @@ struct ExploreView: View {
     
     private func schedulePushNotifications() {
         pushManager.schedulePushNotificationsForTheNextWeek()
+    }
+    
+    private func showCreateAccountScreenIfNeeded() {
+        Task {
+            try? await Task.sleep(for: .seconds(2))
+            
+            // If the user doesn't already have an account (anonymous)
+            // If the user is in our AB test
+            guard
+                authManager.auth?.isAnonymous == true &&
+                abTestManager.activeTests.createAccountTest == true
+            else {
+                return
+            }
+            
+            showCreateAccountView = true
+        }
     }
     
     private func handleShowPushNotificationButton() async {
@@ -406,6 +434,14 @@ struct ExploreView: View {
 #Preview("has data") {
     ExploreView()
         .environment(AvatarManager(service: MockAvatarService()))
+        .previewEnvironment()
+}
+
+#Preview("Has data w/ Create Acct Test") {
+    ExploreView()
+        .environment(AvatarManager(service: MockAvatarService()))
+        .environment(AuthManager(service: MockAuthService(user: .mock(isAnonymous: true))))
+        .environment(ABTestManager(service: MockABTestService(createAccountTest: true)))
         .previewEnvironment()
 }
 
