@@ -16,6 +16,7 @@
 		BA710FF72F718B6500FD3579 /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = BA710FF62F718B6500FD3579 /* OpenAI */; };
 		BA973DE22F29FC3400FE89D0 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = BA973DE12F29FC3400FE89D0 /* SDWebImageSwiftUI */; };
 		BAA3E79E2F7E5BAE00D9CB74 /* Mixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = BAA3E79D2F7E5BAE00D9CB74 /* Mixpanel */; };
+		BACA46302FB883F500335C93 /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = BACA462F2FB883F500335C93 /* FirebaseRemoteConfig */; };
 		BAF556FE2F7D162400085659 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = BAF556FD2F7D162400085659 /* FirebaseAnalytics */; };
 /* End PBXBuildFile section */
 
@@ -78,6 +79,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BACA46302FB883F500335C93 /* FirebaseRemoteConfig in Frameworks */,
 				BA973DE22F29FC3400FE89D0 /* SDWebImageSwiftUI in Frameworks */,
 				BA51ABB32F4EFEF900FB5259 /* FirebaseFirestore in Frameworks */,
 				BAF556FE2F7D162400085659 /* FirebaseAnalytics in Frameworks */,
@@ -167,6 +169,7 @@
 				BAF556FD2F7D162400085659 /* FirebaseAnalytics */,
 				BAA3E79D2F7E5BAE00D9CB74 /* Mixpanel */,
 				BA15163E2F8248D8003C42C7 /* FirebaseCrashlytics */,
+				BACA462F2FB883F500335C93 /* FirebaseRemoteConfig */,
 			);
 			productName = AiChatApp;
 			productReference = BA7C12C72F28D61C001A2FF8 /* AiChatApp.app */;
@@ -935,6 +938,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = BAA3E79C2F7E5BAE00D9CB74 /* XCRemoteSwiftPackageReference "mixpanel-swift" */;
 			productName = Mixpanel;
+		};
+		BACA462F2FB883F500335C93 /* FirebaseRemoteConfig */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BA51AB922F4AF0D400FB5259 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseRemoteConfig;
 		};
 		BAF556FD2F7D162400085659 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
