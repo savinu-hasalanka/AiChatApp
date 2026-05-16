@@ -8,19 +8,22 @@
 import SwiftUI
 
 struct OnboardingIntroView: View {
+    
+    @Environment(ABTestManager.self) private var abTestManager
+    
     var body: some View {
         VStack {
             Group {
                 Text("Make your own ")
                 +
                 Text("avatars ")
-                    .foregroundStyle(Color.accentColor)
+                    .foregroundStyle(.accent)
                     .fontWeight(.semibold)
                 +
                 Text("and chat with them!\n\nHave ")
                 +
                 Text("real conversations ")
-                    .foregroundStyle(Color.accentColor)
+                    .foregroundStyle(.accent)
                     .fontWeight(.semibold)
                 +
                 Text("with AI generated responses.")
@@ -29,9 +32,13 @@ struct OnboardingIntroView: View {
             .minimumScaleFactor(0.5)
             .frame(maxHeight: .infinity)
             .padding(24)
-            
+
             NavigationLink {
-                OnboardingColorView()
+                if abTestManager.activeTests.onboardingCommunityTest {
+                    OnboardingCommunityView()
+                } else {
+                    OnboardingColorView()
+                }
             } label: {
                 Text("Continue")
                     .callToActionButton()
@@ -44,9 +51,17 @@ struct OnboardingIntroView: View {
     }
 }
 
-#Preview {
+#Preview("Original") {
     NavigationStack {
         OnboardingIntroView()
     }
+    .previewEnvironment()
+}
+
+#Preview("Onb Comm Test") {
+    NavigationStack {
+        OnboardingIntroView()
+    }
+    .environment(ABTestManager(service: MockABTestService(onboardingCommunityTest: true)))
     .previewEnvironment()
 }
