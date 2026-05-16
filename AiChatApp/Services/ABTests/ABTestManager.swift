@@ -6,25 +6,38 @@
 //
 import SwiftUI
 
+enum CategoryRowTestOption: String, Codable, CaseIterable {
+    case original, top, hidden
+    
+    static var `default`: Self {
+        .original
+    }
+}
+
 struct ActiveABTests: Codable {
     
     private(set) var createAccountTest: Bool
     private(set) var onboardingCommunityTest: Bool
-    
-    init(createAccountTest: Bool, onboardingCommunityTest: Bool) {
+    private(set) var categoryRowTest: CategoryRowTestOption
+
+    init(createAccountTest: Bool, onboardingCommunityTest: Bool, categoryRowTest: CategoryRowTestOption) {
         self.createAccountTest = createAccountTest
         self.onboardingCommunityTest = onboardingCommunityTest
+        self.categoryRowTest = categoryRowTest
     }
     
     enum CodingKeys: String, CodingKey {
         case createAccountTest = "_202405_CreateAccTest"
         case onboardingCommunityTest = "_202405_OnbCommunityTest"
+        case categoryRowTest = "_202405_CategoryRowTest"
+
     }
     
     var eventParameters: [String: Any] {
         let dict: [String: Any?] = [
             "test\(CodingKeys.createAccountTest.rawValue)": createAccountTest,
             "test\(CodingKeys.onboardingCommunityTest.rawValue)": onboardingCommunityTest,
+            "test\(CodingKeys.categoryRowTest.rawValue)": categoryRowTest.rawValue,
         ]
         return dict.compactMapValues({ $0 })
     }
@@ -35,6 +48,10 @@ struct ActiveABTests: Codable {
     
     mutating func update(onboardingCommunityTest newValue: Bool) {
         onboardingCommunityTest = newValue
+    }
+    
+    mutating func update(categoryRowTest newValue: CategoryRowTestOption) {
+        categoryRowTest = newValue
     }
 }
 
@@ -47,10 +64,15 @@ class MockABTestService: ABTestService {
     
     var activeTests: ActiveABTests
 
-    init(createAccountTest: Bool? = nil, onboardingCommunityTest: Bool? = nil) {
+    init(
+        createAccountTest: Bool? = nil,
+        onboardingCommunityTest: Bool? = nil,
+        categoryRowTest: CategoryRowTestOption? = nil
+    ) {
         self.activeTests = ActiveABTests(
             createAccountTest: createAccountTest ?? false,
-            onboardingCommunityTest: onboardingCommunityTest ?? false
+            onboardingCommunityTest: onboardingCommunityTest ?? false,
+            categoryRowTest: categoryRowTest ?? .default
         )
     }
     
@@ -67,16 +89,21 @@ class LocalABTestService: ABTestService {
     @UserDefault(key: ActiveABTests.CodingKeys.onboardingCommunityTest.rawValue, startingValue: .random())
     private var onboardingCommunityTest: Bool
 
+    @UserDefaultEnum(key: ActiveABTests.CodingKeys.categoryRowTest.rawValue, startingValue: CategoryRowTestOption.allCases.randomElement()!)
+    private var categoryRowTest: CategoryRowTestOption
+
     var activeTests: ActiveABTests {
         ActiveABTests(
             createAccountTest: createAccountTest,
-            onboardingCommunityTest: onboardingCommunityTest
+            onboardingCommunityTest: onboardingCommunityTest,
+            categoryRowTest: categoryRowTest
         )
     }
     
     func saveUpdatedConfig(updatedTests: ActiveABTests) throws {
         createAccountTest = updatedTests.createAccountTest
         onboardingCommunityTest = updatedTests.onboardingCommunityTest
+        categoryRowTest = updatedTests.categoryRowTest
     }
 }
 
@@ -105,4 +132,5 @@ class ABTestManager {
         try service.saveUpdatedConfig(updatedTests: updateTests)
         configure()
     }
+    
 }
