@@ -98,12 +98,14 @@ struct Dependencies {
             logManager = LogManager(services: [
                 ConsoleService(printParameters: false)
             ])
-            authManager = AuthManager(service: MockAuthService(user: isSignedIn ? .mock() : nil), logManager: logManager)
+//            authManager = AuthManager(service: MockAuthService(user: isSignedIn ? .mock() : nil), logManager: logManager)
+            authManager = AuthManager(service: MockAuthService(user: .mock(isAnonymous: true))) // to trigger create account modal in ExploreView
             userManager = UserManager(services: MockUserServices(user: isSignedIn ? .mock : nil), logManager: logManager)
             aiManager = AIManager(service: MockAIService())
             avatarManager = AvatarManager(service: MockAvatarService(), local: MockLocalAvatarPersistence())
             chatManager = ChatManager(service: MockChatService())
-            abTestManager = ABTestManager(service: MockABTestService(), logManager: logManager)
+//            abTestManager = ABTestManager(service: MockABTestService(), logManager: logManager)
+            abTestManager = ABTestManager(service: LocalABTestService(), logManager: logManager)
 
         case .dev:
             logManager = LogManager(services: [
@@ -118,7 +120,7 @@ struct Dependencies {
             aiManager = AIManager(service: MockAIService())
             avatarManager = AvatarManager(service: MockAvatarService(), local: MockLocalAvatarPersistence())
             chatManager = ChatManager(service: MockChatService())
-            abTestManager = ABTestManager(service: MockABTestService(), logManager: logManager)
+            abTestManager = ABTestManager(service: LocalABTestService(), logManager: logManager)
             
         case .prod:
             logManager = LogManager(services: [
